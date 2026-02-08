@@ -299,7 +299,7 @@ export function TanStackStartVitePluginCore(
             ...defineReplaceEnv('TSS_SERVER_FN_BASE', TSS_SERVER_FN_BASE),
             ...defineReplaceEnv('TSS_CLIENT_OUTPUT_DIR', getClientOutputDirectory(viteConfig)),
             ...defineReplaceEnv('TSS_ROUTER_BASEPATH', startConfig.router.basepath),
-            ...(command === 'serve' ? defineReplaceEnv('TSS_SHELL', startConfig.spa?.enabled ? 'true' : 'false') : {}),
+            ...((command === 'serve' || startConfig.spa?.enabled) ? defineReplaceEnv('TSS_SHELL', startConfig.spa?.enabled ? 'true' : 'false') : {}),
             ...defineReplaceEnv('TSS_DEV_SERVER', command === 'serve' ? 'true' : 'false'),
             // Replace NODE_ENV during build (unless opted out) for dead code elimination in server bundles
             ...(command === 'build' && startConfig.server.build.staticNodeEnv ? {
