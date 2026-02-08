@@ -472,7 +472,7 @@ export function createStartHandler<TRegister = Register>(
         router = await entries.routerEntry.getRouter()
 
         let isShell = IS_SHELL_ENV
-        if (IS_PRERENDERING && !isShell) {
+        if (IS_PRERENDERING) {
           isShell = request.headers.get(HEADERS.TSS_SHELL) === 'true'
         }
 
