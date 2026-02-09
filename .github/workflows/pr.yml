@@ -28,6 +28,8 @@ jobs:
           fetch-depth: 0
       - name: Setup Tools
         uses: tanstack/config/.github/setup@main
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install
       - name: Get base and head commits for `nx affected`
         uses: nrwl/nx-set-shas@v4.4.0
         with:
@@ -47,4 +49,5 @@ jobs:
       - name: Build Packages
         run: pnpm run build:all
       - name: Publish Previews
+        if: ${{ github.repository_owner == 'TanStack' }}
         run: pnpx pkg-pr-new publish --pnpm './packages/*' --template './examples/*/*'
