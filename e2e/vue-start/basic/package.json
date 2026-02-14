@@ -20,30 +20,30 @@
     "test:e2e": "pnpm run test:e2e:spaMode && pnpm run test:e2e:ssrMode && pnpm run test:e2e:prerender && pnpm run test:e2e:preview"
   },
   "dependencies": {
-    "@tanstack/vue-router": "workspace:^",
-    "@tanstack/vue-router-devtools": "workspace:^",
-    "@tanstack/vue-start": "workspace:^",
-    "express": "^5.1.0",
+    "@tanstack/vue-router": "workspace:*",
+    "@tanstack/vue-router-devtools": "workspace:*",
+    "@tanstack/vue-start": "workspace:*",
+    "express": "^5.2.1",
     "http-proxy-middleware": "^3.0.5",
     "js-cookie": "^3.0.5",
     "redaxios": "^0.5.1",
-    "vue": "^3.5.16",
-    "tailwind-merge": "^2.6.0",
+    "tailwind-merge": "^2.6.1",
     "vite": "^7.3.1",
-    "zod": "^3.24.2"
+    "vue": "^3.5.28",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@playwright/test": "^1.50.1",
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/router-e2e-utils": "workspace:^",
     "@types/js-cookie": "^3.0.6",
-    "@types/node": "^22.10.2",
+    "@types/node": "25.0.9",
     "@vitejs/plugin-vue": "^5.2.4",
-    "@vitejs/plugin-vue-jsx": "^4.1.2",
+    "@vitejs/plugin-vue-jsx": "^4.2.0",
     "combinate": "^1.1.11",
-    "srvx": "^0.11.2",
+    "srvx": "^0.11.4",
     "tailwindcss": "^4.1.18",
-    "typescript": "^5.7.2",
+    "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^5.1.4"
   }
 }

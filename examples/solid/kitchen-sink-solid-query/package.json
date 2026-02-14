@@ -10,19 +10,19 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
-    "@tanstack/solid-query": "^5.90.9",
-    "@tanstack/solid-query-devtools": "^5.90.0",
-    "@tanstack/solid-router": "^1.159.1",
-    "@tanstack/solid-router-devtools": "^1.159.1",
-    "immer": "^10.1.1",
+    "@tanstack/solid-query": "^5.90.23",
+    "@tanstack/solid-query-devtools": "^5.91.3",
+    "@tanstack/solid-router": "workspace:^",
+    "@tanstack/solid-router-devtools": "workspace:^",
+    "immer": "^10.2.0",
     "redaxios": "^0.5.1",
-    "solid-js": "^1.9.10",
+    "solid-js": "1.9.10",
     "tailwindcss": "^4.1.18",
-    "zod": "^3.24.2"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "typescript": "^5.7.2",
-    "vite": "^6.1.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
     "vite-plugin-solid": "^2.11.10"
   }
 }

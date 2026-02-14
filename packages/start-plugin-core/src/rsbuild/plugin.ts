@@ -34,23 +34,6 @@ type RsbuildPlugin = {
   setup: (api: any) => void
 }
 
-const MODULE_FEDERATION_RSBUILD_PLUGIN_NAME =
-  'rsbuild:module-federation-enhanced'
-
-function hasModuleFederationPlugin(config: any): boolean {
-  if (config?.moduleFederation?.options) {
-    return true
-  }
-
-  if (!Array.isArray(config?.plugins)) {
-    return false
-  }
-
-  return config.plugins.some((plugin: any) => {
-    return plugin?.name === MODULE_FEDERATION_RSBUILD_PLUGIN_NAME
-  })
-}
-
 function isFullUrl(str: string): boolean {
   try {
     new URL(str)
@@ -290,7 +273,7 @@ export function TanStackStartRsbuildPluginCore(
             serverOutputDir,
             SERVER_FN_MANIFEST_TEMP_FILE,
           )
-          const moduleFederationEnabled = hasModuleFederationPlugin(config)
+          const moduleFederationEnabled = startConfig.federation === true
 
           const isDev = api.context?.command === 'serve'
           const isBuild = api.context?.command === 'build'

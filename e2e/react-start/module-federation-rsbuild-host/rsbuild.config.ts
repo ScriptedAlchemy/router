@@ -2,7 +2,6 @@ import { defineConfig } from '@rsbuild/core'
 import { createRequire } from 'node:module'
 import { pluginReact } from '@rsbuild/plugin-react'
 import { pluginModuleFederation } from '@module-federation/rsbuild-plugin'
-import { ModuleFederationPlugin } from '@module-federation/enhanced/rspack'
 import { tanstackStart } from '@tanstack/react-start/plugin/rsbuild'
 
 const require = createRequire(import.meta.url)
@@ -22,71 +21,71 @@ const shared = {
     requiredVersion: false,
   },
 }
-const startConfig = isSpaMode
-  ? {
-      spa: {
-        enabled: true,
-      },
-    }
-  : isPrerenderMode
+const startConfig = {
+  federation: true,
+  ...(isSpaMode
     ? {
-        prerender: {
+        spa: {
           enabled: true,
-          crawlLinks: false,
-          autoStaticPathsDiscovery: false,
         },
-        pages: [
-          { path: '/' },
-          { path: '/selective-client-only' },
-        ],
       }
-    : undefined
+    : isPrerenderMode
+      ? {
+          prerender: {
+            enabled: true,
+            crawlLinks: false,
+            autoStaticPathsDiscovery: false,
+          },
+          pages: [
+            { path: '/' },
+            { path: '/selective-client-only' },
+          ],
+        }
+      : {}),
+}
+
+const createClientFederationConfig = () => ({
+  name: 'mf_host',
+  remotes: {
+    mf_remote: `mf_remote@${remoteOrigin}/mf-manifest.json`,
+  },
+  dts: false,
+  experiments: {
+    asyncStartup: true,
+  },
+  runtimePlugins: [require.resolve('@module-federation/node/runtimePlugin')],
+  shared,
+})
+
+const createServerFederationConfig = () => ({
+  name: 'mf_host_ssr',
+  remotes: {
+    mf_remote: `mf_remote@${remoteOrigin}/ssr/mf-manifest.json`,
+  },
+  dts: false,
+  experiments: {
+    asyncStartup: true,
+  },
+  runtimePlugins: enableServerFederationRuntime
+    ? [require.resolve('@module-federation/node/runtimePlugin')]
+    : [],
+  shared,
+})
+const startPlugins = tanstackStart(startConfig)
 
 export default defineConfig({
   plugins: [
     pluginReact(),
-    pluginModuleFederation(
-      {
-        name: 'mf_host',
-        remotes: {
-          mf_remote: `mf_remote@${remoteOrigin}/remoteEntry.js`,
-        },
-        dts: false,
-        experiments: {
-          asyncStartup: true,
-        },
-        runtimePlugins: [require.resolve('@module-federation/node/runtimePlugin')],
-        shared,
-      },
-      {
-        environment: 'client',
-      },
-    ),
-    ...tanstackStart(startConfig),
+    pluginModuleFederation(createServerFederationConfig(), {
+      target: 'node',
+      environment: 'ssr',
+    }),
+    pluginModuleFederation(createClientFederationConfig(), {
+      environment: 'client',
+    }),
+    ...(Array.isArray(startPlugins) ? startPlugins : [startPlugins]),
   ],
   environments: {
-    ssr: {
-      tools: {
-        rspack: {
-          plugins: [
-            new ModuleFederationPlugin({
-              name: 'mf_host_ssr',
-              remotes: {
-                mf_remote: `mf_remote@${remoteOrigin}/ssr/remoteEntry.js`,
-              },
-              dts: false,
-              experiments: {
-                asyncStartup: true,
-              },
-              remoteType: 'script',
-              runtimePlugins: enableServerFederationRuntime
-                ? [require.resolve('@module-federation/node/runtimePlugin')]
-                : [],
-              shared,
-            }),
-          ],
-        },
-      },
-    },
+    ssr: {},
   },
 })

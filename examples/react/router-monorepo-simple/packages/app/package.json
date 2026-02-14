@@ -11,19 +11,19 @@
   "dependencies": {
     "@router-mono-simple/post-feature": "workspace:*",
     "@router-mono-simple/router": "workspace:*",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "@tanstack/react-router-devtools": "^1.158.4",
-    "@types/react": "^19.0.8",
-    "@types/react-dom": "^19.0.3",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@tailwindcss/vite": "4.1.18",
+    "@tanstack/react-router-devtools": "workspace:^",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.7.0",
     "tailwindcss": "4.1.18",
-    "typescript": "^5.7.2",
+    "typescript": "^5.9.3",
     "vite": "^7.3.1",
-    "vite-plugin-dts": "^4.5.4",
-    "@tailwindcss/vite": "4.1.18"
+    "vite-plugin-dts": "4.0.3"
   },
   "nx": {
     "targets": {

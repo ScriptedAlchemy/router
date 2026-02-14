@@ -60,14 +60,14 @@
   "dependencies": {
     "@tanstack/history": "workspace:*",
     "@tanstack/router-core": "workspace:*",
-    "@tanstack/vue-router": "workspace:*",
     "@tanstack/start-client-core": "workspace:*",
-    "@tanstack/start-server-core": "workspace:*"
+    "@tanstack/start-server-core": "workspace:*",
+    "@tanstack/vue-router": "workspace:*"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue-jsx": "^4.1.2",
-    "typescript": "^5.7.2",
-    "vue": "^3.5.25"
+    "@vitejs/plugin-vue-jsx": "^4.2.0",
+    "typescript": "^5.9.3",
+    "vue": "^3.5.28"
   },
   "peerDependencies": {
     "vue": "^3.3.0"

@@ -2,34 +2,42 @@ import { defineConfig } from '@rsbuild/core'
 import { createRequire } from 'node:module'
 import { pluginReact } from '@rsbuild/plugin-react'
 import { pluginModuleFederation } from '@module-federation/rsbuild-plugin'
-import { ModuleFederationPlugin } from '@module-federation/enhanced/rspack'
 
 const require = createRequire(import.meta.url)
 const remotePort = Number(process.env.REMOTE_PORT || 3001)
 const remoteOrigin = `http://localhost:${remotePort}`
+const shared = {
+  react: {
+    singleton: true,
+    requiredVersion: false,
+  },
+  'react-dom': {
+    singleton: true,
+    requiredVersion: false,
+  },
+}
+
+const createFederationConfig = () => ({
+  name: 'mf_remote',
+  filename: 'remoteEntry.js',
+  exposes: {
+    './message': './src/message.tsx',
+    './routes': './src/routes.tsx',
+    './server-data': './src/server-data.ts',
+  },
+  runtimePlugins: [require.resolve('@module-federation/node/runtimePlugin')],
+  shared,
+})
 
 export default defineConfig({
   plugins: [
     pluginReact(),
-    pluginModuleFederation({
-      name: 'mf_remote',
-      filename: 'remoteEntry.js',
-      exposes: {
-        './message': './src/message.tsx',
-        './routes': './src/routes.tsx',
-        './server-data': './src/server-data.ts',
-      },
-      runtimePlugins: [require.resolve('@module-federation/node/runtimePlugin')],
-      shared: {
-        react: {
-          singleton: true,
-          requiredVersion: false,
-        },
-        'react-dom': {
-          singleton: true,
-          requiredVersion: false,
-        },
-      },
+    pluginModuleFederation(createFederationConfig(), {
+      target: 'node',
+      environment: 'ssr',
+    }),
+    pluginModuleFederation(createFederationConfig(), {
+      environment: 'web',
     }),
   ],
   environments: {
@@ -43,8 +51,12 @@ export default defineConfig({
         entry: {},
       },
       output: {
-        assetPrefix: `${remoteOrigin}/ssr/`,
+        assetPrefix: 'auto',
         cleanDistPath: false,
+        chunkLoadingGlobal: 'chunk_mf_remote_ssr',
+        library: {
+          type: 'commonjs-module',
+        },
         distPath: {
           root: 'ssr',
         },
@@ -59,34 +71,6 @@ export default defineConfig({
               type: 'commonjs-module',
             },
           },
-          plugins: [
-            new ModuleFederationPlugin({
-              name: 'mf_remote',
-              filename: 'remoteEntry.js',
-              library: {
-                type: 'commonjs-module',
-              },
-              dts: false,
-              exposes: {
-                './message': './src/message.tsx',
-                './routes': './src/routes.tsx',
-                './server-data': './src/server-data.ts',
-              },
-              runtimePlugins: [
-                require.resolve('@module-federation/node/runtimePlugin'),
-              ],
-              shared: {
-                react: {
-                  singleton: true,
-                  requiredVersion: false,
-                },
-                'react-dom': {
-                  singleton: true,
-                  requiredVersion: false,
-                },
-              },
-            }),
-          ],
         },
       },
     },

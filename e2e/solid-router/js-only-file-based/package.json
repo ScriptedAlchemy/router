@@ -14,15 +14,15 @@
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/solid-router": "workspace:^",
     "@tanstack/solid-router-devtools": "workspace:^",
-    "solid-js": "^1.9.10",
     "redaxios": "^0.5.1",
+    "solid-js": "1.9.10",
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
-    "@playwright/test": "^1.50.1",
+    "@playwright/test": "^1.58.2",
     "@tanstack/router-e2e-utils": "workspace:^",
-    "@tanstack/router-plugin": "workspace:^",
-    "vite-plugin-solid": "^2.11.10",
-    "vite": "^7.3.1"
+    "@tanstack/router-plugin": "workspace:*",
+    "vite": "^7.3.1",
+    "vite-plugin-solid": "^2.11.10"
   }
 }

@@ -9,18 +9,18 @@
     "start": "vite"
   },
   "dependencies": {
-    "@tanstack/vue-router": "^1.158.4",
-    "@tanstack/vue-router-devtools": "^1.158.4",
+    "@tanstack/vue-router": "workspace:*",
+    "@tanstack/vue-router-devtools": "workspace:*",
     "redaxios": "^0.5.1",
-    "vue": "^3.5.13",
-    "tailwindcss": "4.1.18"
+    "tailwindcss": "4.1.18",
+    "vue": "^3.5.28"
   },
   "devDependencies": {
-    "typescript": "^5.7.2",
-    "vite": "^6.1.0",
-    "vue-tsc": "^3.1.5",
-    "@vitejs/plugin-vue": "^5.2.3",
-    "@vitejs/plugin-vue-jsx": "^4.1.2",
-    "@tailwindcss/vite": "4.1.18"
+    "@tailwindcss/vite": "4.1.18",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "@vitejs/plugin-vue-jsx": "^4.2.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vue-tsc": "^3.2.4"
   }
 }

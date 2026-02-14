@@ -18,7 +18,7 @@ test('renders the remote module on the SSR response', async ({ page }) => {
   }
 })
 
-test('loads remote entry over http at runtime', async ({
+test('loads remote manifest over http at runtime', async ({
   page,
 }) => {
   const remoteRequests: Array<string> = []
@@ -28,7 +28,11 @@ test('loads remote entry over http at runtime', async ({
     if (!url.startsWith(REMOTE_ORIGIN)) {
       return
     }
-    if (url.endsWith('.js')) {
+    if (
+      url.endsWith('.js') ||
+      url.includes('/mf-manifest.json') ||
+      url.includes('/dist/mf-manifest.json')
+    ) {
       remoteRequests.push(url)
     }
   })
@@ -38,7 +42,8 @@ test('loads remote entry over http at runtime', async ({
 
   expect(
     remoteRequests.some(
-      (url) => url.includes('/remoteEntry.js') || url.includes('/dist/remoteEntry.js'),
+      (url) =>
+        url.includes('/mf-manifest.json') || url.includes('/dist/mf-manifest.json'),
     ),
   ).toBeTruthy()
 

@@ -7,21 +7,21 @@
     "build": "webpack build && tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/react-router": "^1.158.4",
-    "@tanstack/react-router-devtools": "^1.158.4",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "@tanstack/react-router": "workspace:*",
+    "@tanstack/react-router-devtools": "workspace:^",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "@swc/core": "^1.10.15",
-    "@tanstack/router-plugin": "^1.158.4",
-    "@types/react": "^19.0.8",
-    "@types/react-dom": "^19.0.3",
-    "html-webpack-plugin": "^5.6.3",
-    "swc-loader": "^0.2.6",
-    "typescript": "^5.7.2",
-    "webpack": "^5.97.1",
+    "@swc/core": "^1.15.11",
+    "@tanstack/router-plugin": "workspace:*",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "html-webpack-plugin": "^5.6.6",
+    "swc-loader": "^0.2.7",
+    "typescript": "^5.9.3",
+    "webpack": "^5.105.2",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.2.0"
+    "webpack-dev-server": "^5.2.3"
   }
 }

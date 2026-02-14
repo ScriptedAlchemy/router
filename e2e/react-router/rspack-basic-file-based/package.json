@@ -10,23 +10,23 @@
     "test:e2e": "rm -rf port*.txt; playwright test --project=chromium"
   },
   "dependencies": {
-    "@tanstack/react-router": "workspace:^",
+    "@tanstack/react-router": "workspace:*",
     "@tanstack/react-router-devtools": "workspace:^",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "redaxios": "^0.5.1"
   },
   "devDependencies": {
-    "@playwright/test": "^1.50.1",
-    "@rsbuild/core": "^1.2.4",
-    "@rsbuild/plugin-react": "^1.1.0",
+    "@playwright/test": "^1.58.2",
+    "@rsbuild/core": "^1.7.3",
+    "@rsbuild/plugin-react": "^1.4.5",
     "@tailwindcss/postcss": "^4.1.18",
     "@tanstack/router-e2e-utils": "workspace:^",
-    "@tanstack/router-plugin": "workspace:^",
-    "@types/react": "^19.0.8",
-    "@types/react-dom": "^19.0.3",
-    "postcss": "^8.5.1",
+    "@tanstack/router-plugin": "workspace:*",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "postcss": "^8.5.6",
     "tailwindcss": "^4.1.18",
-    "typescript": "^5.7.2"
+    "typescript": "^5.9.3"
   }
 }

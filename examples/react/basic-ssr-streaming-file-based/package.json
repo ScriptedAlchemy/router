@@ -11,22 +11,22 @@
     "debug": "node --inspect-brk server"
   },
   "dependencies": {
-    "@tanstack/react-router": "^1.158.4",
-    "@tanstack/router-plugin": "^1.158.4",
-    "compression": "^1.8.0",
-    "express": "^4.21.2",
+    "@tanstack/react-router": "workspace:*",
+    "@tanstack/router-plugin": "workspace:*",
+    "compression": "^1.8.1",
+    "express": "^4.22.1",
     "get-port": "^7.1.0",
     "node-fetch": "^3.3.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "@tanstack/react-router-devtools": "^1.158.4",
-    "@types/express": "^4.17.23",
-    "@types/react": "^19.0.8",
-    "@types/react-dom": "^19.0.1",
-    "@vitejs/plugin-react": "^4.3.4",
-    "typescript": "^5.7.2",
+    "@tanstack/react-router-devtools": "workspace:^",
+    "@types/express": "^4.17.25",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.7.0",
+    "typescript": "^5.9.3",
     "vite": "^7.3.1"
   }
 }

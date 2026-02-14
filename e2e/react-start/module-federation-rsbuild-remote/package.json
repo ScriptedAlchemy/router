@@ -8,16 +8,17 @@
     "preview": "rsbuild preview"
   },
   "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "@module-federation/node": "^2.7.32",
-    "@module-federation/rsbuild-plugin": "https://pkg.pr.new/module-federation/core/@module-federation/rsbuild-plugin@4427",
-    "@rsbuild/core": "^1.3.21",
-    "@rsbuild/plugin-react": "^1.1.0",
-    "@types/react": "^19.0.8",
-    "@types/react-dom": "^19.0.3",
-    "typescript": "^5.7.2"
+    "@module-federation/node": "file:/tmp/module-federation-node-2.7.32.tgz",
+    "@module-federation/rsbuild-plugin": "file:/tmp/module-federation-rsbuild-plugin-2.0.1.tgz",
+    "@module-federation/sdk": "file:/tmp/module-federation-sdk-2.0.1.tgz",
+    "@rsbuild/core": "^1.7.3",
+    "@rsbuild/plugin-react": "^1.4.5",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3"
   }
 }

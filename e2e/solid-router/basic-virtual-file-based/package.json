@@ -12,17 +12,17 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
-    "@tanstack/router-plugin": "workspace:^",
+    "@tanstack/router-plugin": "workspace:*",
     "@tanstack/solid-router": "workspace:^",
     "@tanstack/solid-router-devtools": "workspace:^",
-    "@tanstack/virtual-file-routes": "workspace:^",
+    "@tanstack/virtual-file-routes": "workspace:*",
     "redaxios": "^0.5.1",
-    "solid-js": "^1.9.10",
+    "solid-js": "1.9.10",
     "tailwindcss": "^4.1.18",
-    "zod": "^3.24.2"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@playwright/test": "^1.50.1",
+    "@playwright/test": "^1.58.2",
     "@tanstack/router-e2e-utils": "workspace:^",
     "vite": "^7.3.1",
     "vite-plugin-solid": "^2.11.10"

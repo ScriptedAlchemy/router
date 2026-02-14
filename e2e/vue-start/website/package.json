@@ -12,25 +12,25 @@
     "test:e2e": "rm -rf port*.txt; playwright test --project=chromium"
   },
   "dependencies": {
-    "@tanstack/vue-router": "workspace:^",
-    "@tanstack/vue-router-devtools": "workspace:^",
-    "@tanstack/vue-start": "workspace:^",
+    "@tanstack/vue-router": "workspace:*",
+    "@tanstack/vue-router-devtools": "workspace:*",
+    "@tanstack/vue-start": "workspace:*",
     "redaxios": "^0.5.1",
-    "tailwind-merge": "^2.6.0",
+    "tailwind-merge": "^2.6.1",
     "vite": "^7.3.1",
-    "vue": "^3.5.25",
-    "zod": "^3.24.2"
+    "vue": "^3.5.28",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@playwright/test": "^1.50.1",
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/router-e2e-utils": "workspace:^",
-    "@types/node": "^22.10.2",
-    "srvx": "^0.11.2",
+    "@types/node": "25.0.9",
+    "@vitejs/plugin-vue": "^6.0.4",
+    "@vitejs/plugin-vue-jsx": "^5.1.4",
+    "srvx": "^0.11.4",
     "tailwindcss": "^4.1.18",
-    "typescript": "^5.7.2",
-    "@vitejs/plugin-vue": "^6.0.3",
-    "@vitejs/plugin-vue-jsx": "^5.1.2",
+    "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^5.1.4"
   }
 }

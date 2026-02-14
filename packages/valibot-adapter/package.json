@@ -64,15 +64,15 @@
     "node": ">=12"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.2.0",
     "@tanstack/react-router": "workspace:*",
-    "valibot": "1.0.0-beta.15",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "valibot": "1.0.0-beta.15"
   },
   "peerDependencies": {
-    "valibot": "^1.0.0 || ^1.0.0-beta.5 || ^1.0.0-rc",
-    "@tanstack/react-router": ">=1.43.2"
+    "@tanstack/react-router": ">=1.43.2",
+    "valibot": "^1.0.0 || ^1.0.0-beta.5 || ^1.0.0-rc"
   }
 }

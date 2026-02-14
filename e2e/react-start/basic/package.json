@@ -20,34 +20,34 @@
     "test:e2e": "pnpm run test:e2e:spaMode && pnpm run test:e2e:ssrMode && pnpm run test:e2e:prerender && pnpm run test:e2e:preview"
   },
   "dependencies": {
-    "@tanstack/react-router": "workspace:^",
+    "@tanstack/react-router": "workspace:*",
     "@tanstack/react-router-devtools": "workspace:^",
-    "@tanstack/react-start": "workspace:^",
-    "express": "^5.1.0",
+    "@tanstack/react-start": "workspace:*",
+    "express": "^5.2.1",
     "http-proxy-middleware": "^3.0.5",
     "js-cookie": "^3.0.5",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
     "redaxios": "^0.5.1",
-    "tailwind-merge": "^2.6.0"
+    "tailwind-merge": "^2.6.1"
   },
   "devDependencies": {
-    "@playwright/test": "^1.50.1",
-    "@rsbuild/core": "^1.2.4",
-    "@rsbuild/plugin-react": "^1.1.0",
+    "@playwright/test": "^1.58.2",
+    "@rsbuild/core": "^1.7.3",
+    "@rsbuild/plugin-react": "^1.4.5",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/router-e2e-utils": "workspace:^",
     "@types/js-cookie": "^3.0.6",
-    "@types/node": "^22.10.2",
-    "@types/react": "^19.0.8",
-    "@types/react-dom": "^19.0.3",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@types/node": "25.0.9",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.7.0",
     "combinate": "^1.1.11",
-    "srvx": "^0.11.2",
+    "srvx": "^0.11.4",
     "tailwindcss": "^4.1.18",
-    "typescript": "^5.7.2",
+    "typescript": "^5.9.3",
     "vite": "^7.3.1",
     "vite-tsconfig-paths": "^5.1.4",
-    "zod": "^3.24.2"
+    "zod": "^3.25.76"
   }
 }

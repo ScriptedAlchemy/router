@@ -12,20 +12,20 @@
     "postinstall": "npm run cf-typegen"
   },
   "dependencies": {
-    "@tanstack/solid-router": "^1.159.1",
-    "@tanstack/solid-router-devtools": "^1.159.1",
-    "@tanstack/solid-start": "^1.159.1",
-    "solid-js": "^1.9.10"
+    "@tanstack/solid-router": "workspace:^",
+    "@tanstack/solid-router-devtools": "workspace:^",
+    "@tanstack/solid-start": "workspace:*",
+    "solid-js": "1.9.10"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.13.7",
+    "@cloudflare/vite-plugin": "^1.25.0",
     "@tailwindcss/vite": "^4.1.18",
-    "@types/node": "^22.5.4",
+    "@types/node": "25.0.9",
     "tailwindcss": "^4.1.18",
-    "typescript": "^5.7.2",
+    "typescript": "^5.9.3",
     "vite": "^7.3.1",
     "vite-plugin-solid": "^2.11.10",
     "vite-tsconfig-paths": "^5.1.4",
-    "wrangler": "^4.49.1"
+    "wrangler": "^4.65.0"
   }
 }
