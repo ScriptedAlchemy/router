@@ -24,4 +24,19 @@ declare module 'mf_remote/server-data' {
     source: string
     message: string
   }
+
+  export function getFederatedResponseLikeRedirect(href: string): {
+    status: number
+    headers: Headers
+    ok: boolean
+    body: null
+    json: () => Promise<never>
+    text: () => Promise<string>
+    options: {
+      href: string
+      statusCode: number
+    }
+  }
+
+  export function getFederatedRawResponse(source: string): Response
 }

@@ -778,3 +778,40 @@ test('loads federated server function data', async ({ page }) => {
     '"message":"Federated server data from remote"',
   )
 })
+
+test('serializes response-like redirects from federated server functions', async ({
+  page,
+}) => {
+  test.skip(
+    HOST_MODE !== 'ssr',
+    'Server federation runtime is only enabled for SSR mode.',
+  )
+
+  await page.goto('/server-fn-mf')
+  await expect(page.getByTestId('server-fn-heading')).toBeVisible()
+
+  await page.getByTestId('server-fn-redirect-btn').click()
+
+  await expect(page.getByTestId('host-heading')).toContainText('Host application')
+})
+
+test('returns raw Response values from federated server functions', async ({
+  page,
+}) => {
+  test.skip(
+    HOST_MODE !== 'ssr',
+    'Server federation runtime is only enabled for SSR mode.',
+  )
+
+  await page.goto('/server-fn-mf')
+  await expect(page.getByTestId('server-fn-heading')).toBeVisible()
+
+  await page.getByTestId('server-fn-raw-btn').click()
+
+  await expect(page.getByTestId('server-fn-raw-result')).toContainText(
+    'Federated raw response from remote (server-function)',
+  )
+  await expect(page.getByTestId('server-fn-raw-result')).toContainText(
+    '"status":202',
+  )
+})

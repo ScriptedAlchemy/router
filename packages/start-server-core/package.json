@@ -59,6 +59,12 @@
         "default": "./dist/esm/createSsrRpc.js"
       }
     },
+    "./server-fn-ssr-caller": {
+      "import": {
+        "types": "./dist/esm/server-fn-ssr-caller.d.ts",
+        "default": "./dist/esm/server-fn-ssr-caller.js"
+      }
+    },
     "./package.json": "./package.json"
   },
   "imports": {

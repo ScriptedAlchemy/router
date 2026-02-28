@@ -418,6 +418,41 @@ function getRedirectOptions(
   value: unknown,
 ): Record<string, unknown> | undefined {
   if (!isRedirect(value)) {
+    if (value === null || typeof value !== 'object') {
+      return undefined
+    }
+
+    const candidate = value as {
+      options?: unknown
+      status?: unknown
+      headers?: { get?: unknown }
+    }
+
+    if (candidate.options && typeof candidate.options === 'object') {
+      const options = candidate.options as Record<string, unknown>
+      if (typeof options.href === 'string' || typeof options.to === 'string') {
+        return options
+      }
+    }
+
+    if (
+      typeof candidate.status === 'number' &&
+      candidate.status >= 300 &&
+      candidate.status < 400 &&
+      candidate.headers &&
+      typeof candidate.headers.get === 'function'
+    ) {
+      const location =
+        candidate.headers.get('location') ?? candidate.headers.get('Location')
+
+      if (typeof location === 'string' && location.length > 0) {
+        return {
+          href: location,
+          statusCode: candidate.status,
+        }
+      }
+    }
+
     return undefined
   }
   return value.options as Record<string, unknown>
