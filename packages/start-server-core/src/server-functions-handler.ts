@@ -427,18 +427,23 @@ function getRedirectOptions(
       status?: unknown
       headers?: { get?: unknown }
     }
+    const statusCode =
+      typeof candidate.status === 'number' ? candidate.status : undefined
+    const isRedirectStatusCode =
+      statusCode !== undefined && statusCode >= 300 && statusCode < 400
 
     if (candidate.options && typeof candidate.options === 'object') {
       const options = candidate.options as Record<string, unknown>
-      if (typeof options.href === 'string' || typeof options.to === 'string') {
+      if (
+        (typeof options.href === 'string' || typeof options.to === 'string') &&
+        isRedirectStatusCode
+      ) {
         return options
       }
     }
 
     if (
-      typeof candidate.status === 'number' &&
-      candidate.status >= 300 &&
-      candidate.status < 400 &&
+      isRedirectStatusCode &&
       candidate.headers &&
       typeof candidate.headers.get === 'function'
     ) {
@@ -448,7 +453,7 @@ function getRedirectOptions(
       if (typeof location === 'string' && location.length > 0) {
         return {
           href: location,
-          statusCode: candidate.status,
+          statusCode,
         }
       }
     }

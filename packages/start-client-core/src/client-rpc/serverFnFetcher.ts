@@ -95,7 +95,7 @@ function getRedirectOptionsFromPayload(
     const options = candidate.options as Record<string, unknown>
     if (
       (typeof options.href === 'string' || typeof options.to === 'string') &&
-      (responseLike || isRedirectStatusCode)
+      isRedirectStatusCode
     ) {
       return {
         ...options,
