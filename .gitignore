@@ -79,3 +79,7 @@ vite.config.ts.timestamp_*
 **/llms
 
 **/.tanstack
+
+# Module Federation rsbuild e2e generated outputs
+e2e/react-start/module-federation-rsbuild-remote/ssr/
+e2e/react-start/module-federation-rsbuild-host/test-results/
