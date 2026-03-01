@@ -84,7 +84,10 @@ export default defineConfig({
         environment: 'ssr',
       },
     ),
-    ...tanstackStart(startConfig),
+    ...tanstackStart({
+      ...startConfig,
+      federation: hostMode === 'ssr',
+    }),
   ],
   environments: {
     ssr: {},
