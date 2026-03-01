@@ -7,6 +7,10 @@ const REMOTE_PORT = await getTestServerPort(`${packageJson.name}-remote`)
 const REMOTE_ORIGIN = `http://localhost:${REMOTE_PORT}`
 const HOST_MODE = process.env.HOST_MODE || 'ssr'
 const REMOTE_PACKAGE_NAME = packageJson.name.replace(/-host$/, '-remote')
+const EXPECTED_CLIENT_SHARED_REQUIRED_VERSION =
+  (packageJson.dependencies?.react as string | undefined) ??
+  (packageJson.devDependencies?.react as string | undefined) ??
+  '^*'
 
 type SharedAssetGroup = {
   sync?: Array<string>
@@ -331,7 +335,7 @@ test('serves federation manifest and stats endpoints as JSON', async ({
       '',
       '',
       `${REMOTE_ORIGIN}/`,
-      '^19.2.3',
+      EXPECTED_CLIENT_SHARED_REQUIRED_VERSION,
     ],
     [
       '/dist/mf-stats.json',
@@ -341,7 +345,7 @@ test('serves federation manifest and stats endpoints as JSON', async ({
       '',
       '',
       `${REMOTE_ORIGIN}/`,
-      '^19.2.3',
+      EXPECTED_CLIENT_SHARED_REQUIRED_VERSION,
     ],
     [
       '/ssr/mf-manifest.json',
