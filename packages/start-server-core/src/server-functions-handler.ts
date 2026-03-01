@@ -414,10 +414,63 @@ function isResponseLike(value: unknown): value is Response {
   )
 }
 
+function isLegacyFallbackRedirectPayload(candidate: Record<string, unknown>) {
+  const allowedKeys = new Set(['status', 'statusCode', 'options', 'headers'])
+  return Object.keys(candidate).every((key) => allowedKeys.has(key))
+}
+
 function getRedirectOptions(
   value: unknown,
 ): Record<string, unknown> | undefined {
   if (!isRedirect(value)) {
+    if (value === null || typeof value !== 'object') {
+      return undefined
+    }
+
+    const candidate = value as {
+      options?: unknown
+      status?: unknown
+      statusCode?: unknown
+      headers?: { get?: unknown }
+    }
+    const statusCodeFromStatus =
+      typeof candidate.status === 'number' ? candidate.status : undefined
+    const statusCodeFromPayload =
+      typeof candidate.statusCode === 'number' ? candidate.statusCode : undefined
+    const statusCode = statusCodeFromStatus ?? statusCodeFromPayload
+    const isRedirectStatusCode =
+      statusCode !== undefined && statusCode >= 300 && statusCode < 400
+
+    if (candidate.options && typeof candidate.options === 'object') {
+      const options = candidate.options as Record<string, unknown>
+      if (
+        isLegacyFallbackRedirectPayload(candidate as Record<string, unknown>) &&
+        (typeof options.href === 'string' || typeof options.to === 'string') &&
+        isRedirectStatusCode
+      ) {
+        return {
+          ...options,
+          ...(typeof options.statusCode === 'number' ? {} : { statusCode }),
+        }
+      }
+    }
+
+    if (
+      isRedirectStatusCode &&
+      candidate.headers &&
+      typeof candidate.headers.get === 'function'
+    ) {
+      const location =
+        candidate.headers.get('location') ?? candidate.headers.get('Location')
+
+      if (typeof location === 'string' && location.length > 0) {
+        return {
+          href: location,
+          statusCode,
+        }
+      }
+    }
+
     return undefined
   }
   return value.options as Record<string, unknown>

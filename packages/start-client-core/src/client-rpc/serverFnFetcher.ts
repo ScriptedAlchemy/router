@@ -65,20 +65,80 @@ function isResponseLike(value: unknown): value is Response {
   )
 }
 
-function parseRedirectFallback(payload: unknown) {
+function isLegacyFallbackRedirectPayload(candidate: Record<string, unknown>) {
+  const allowedKeys = new Set(['status', 'statusCode', 'options', 'headers'])
+  return Object.keys(candidate).every((key) => allowedKeys.has(key))
+}
+
+function getRedirectOptionsFromPayload(
+  payload: unknown,
+): Record<string, unknown> | undefined {
   if (!payload || typeof payload !== 'object') {
     return undefined
   }
-  if (!('isSerializedRedirect' in payload)) {
-    return undefined
-  }
+
   if (
-    (payload as { isSerializedRedirect?: boolean }).isSerializedRedirect !==
-    true
+    'isSerializedRedirect' in payload &&
+    (payload as { isSerializedRedirect?: boolean }).isSerializedRedirect ===
+      true
   ) {
+    return payload as unknown as Record<string, unknown>
+  }
+
+  const candidate = payload as {
+    status?: unknown
+    statusCode?: unknown
+    headers?: Headers
+    options?: unknown
+  }
+
+  const statusCodeFromStatus =
+    typeof candidate.status === 'number' ? candidate.status : undefined
+  const statusCodeFromPayload =
+    typeof candidate.statusCode === 'number' ? candidate.statusCode : undefined
+  const statusCode = statusCodeFromStatus ?? statusCodeFromPayload
+  const isRedirectStatusCode =
+    statusCode !== undefined && statusCode >= 300 && statusCode < 400
+  const responseLike = isResponseLike(payload)
+
+  if (candidate.options && typeof candidate.options === 'object') {
+    const options = candidate.options as Record<string, unknown>
+    if (
+      isLegacyFallbackRedirectPayload(candidate as Record<string, unknown>) &&
+      (typeof options.href === 'string' || typeof options.to === 'string') &&
+      isRedirectStatusCode
+    ) {
+      return {
+        ...options,
+        ...(typeof options.statusCode === 'number'
+          ? {}
+          : { statusCode }),
+      }
+    }
+  }
+
+  if (responseLike && isRedirectStatusCode) {
+    const location =
+      candidate.headers!.get('location') ?? candidate.headers!.get('Location')
+
+    if (location) {
+      return {
+        href: location,
+        statusCode,
+      }
+    }
+  }
+
+  return undefined
+}
+
+function parseRedirectFallback(payload: unknown) {
+  const redirectOptions = getRedirectOptionsFromPayload(payload)
+  if (!redirectOptions) {
     return undefined
   }
-  return redirect(payload as unknown as RedirectOptions)
+
+  return redirect(redirectOptions as unknown as RedirectOptions)
 }
 // caller =>
 //   serverFnFetcher =>

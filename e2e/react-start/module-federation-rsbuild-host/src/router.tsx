@@ -16,9 +16,10 @@ const dynamicRemoteRoutes = remoteRouteRegistrations.map((registration) =>
   }),
 )
 
-const routeTree = fileRouteTree.addChildren(
-  [...(fileRouteTree.children ?? []), ...dynamicRemoteRoutes] as any,
-)
+const routeTree = fileRouteTree.addChildren([
+  ...(fileRouteTree.children ?? []),
+  ...dynamicRemoteRoutes,
+] as any)
 
 export function getRouter() {
   return createRouter({

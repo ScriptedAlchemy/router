@@ -2,11 +2,21 @@ import { expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
 import { getTestServerPort, test } from '@tanstack/router-e2e-utils'
 import packageJson from '../package.json' with { type: 'json' }
+import reactPackageJson from 'react/package.json' with { type: 'json' }
 
 const REMOTE_PORT = await getTestServerPort(`${packageJson.name}-remote`)
 const REMOTE_ORIGIN = `http://localhost:${REMOTE_PORT}`
 const HOST_MODE = process.env.HOST_MODE || 'ssr'
 const REMOTE_PACKAGE_NAME = packageJson.name.replace(/-host$/, '-remote')
+const EXPECTED_INSTALLED_REACT_REQUIRED_VERSION =
+  typeof reactPackageJson.version === 'string'
+    ? `^${reactPackageJson.version}`
+    : undefined
+const EXPECTED_CLIENT_SHARED_REQUIRED_VERSION =
+  EXPECTED_INSTALLED_REACT_REQUIRED_VERSION ??
+  (packageJson.dependencies?.react as string | undefined) ??
+  (packageJson.devDependencies?.react as string | undefined) ??
+  '^*'
 
 type SharedAssetGroup = {
   sync?: Array<string>
@@ -184,7 +194,9 @@ async function assertAssetServedAsJavaScript(
   basePath: '/dist' | '/ssr',
   assetPath: string,
 ) {
-  const response = await page.request.get(`${REMOTE_ORIGIN}${basePath}/${assetPath}`)
+  const response = await page.request.get(
+    `${REMOTE_ORIGIN}${basePath}/${assetPath}`,
+  )
   expect(response.ok()).toBeTruthy()
 
   const contentType = (response.headers()['content-type'] ?? '').toLowerCase()
@@ -209,7 +221,9 @@ async function assertExposeContracts(
 
   const exposesByName = getExposesByName(manifest)
   expect(exposesByName.size).toBe(Object.keys(expectedExposePaths).length)
-  for (const [exposeName, expectedPath] of Object.entries(expectedExposePaths)) {
+  for (const [exposeName, expectedPath] of Object.entries(
+    expectedExposePaths,
+  )) {
     const exposeEntry = exposesByName.get(exposeName)
     expect(exposeEntry).toBeDefined()
     expect(exposeEntry?.path).toBe(expectedPath)
@@ -236,9 +250,7 @@ test('renders the remote module on the SSR response', async ({ page }) => {
   }
 })
 
-test('loads remote entry over http at runtime', async ({
-  page,
-}) => {
+test('loads remote entry over http at runtime', async ({ page }) => {
   const remoteRequests: Array<string> = []
 
   page.on('request', (request) => {
@@ -256,7 +268,8 @@ test('loads remote entry over http at runtime', async ({
 
   expect(
     remoteRequests.some(
-      (url) => url.includes('/remoteEntry.js') || url.includes('/dist/remoteEntry.js'),
+      (url) =>
+        url.includes('/remoteEntry.js') || url.includes('/dist/remoteEntry.js'),
     ),
   ).toBeTruthy()
 
@@ -272,8 +285,13 @@ test('loads remote entry over http at runtime', async ({
 })
 
 test('serves remote entries as javascript over HTTP', async ({ page }) => {
-  for (const remoteEntryPath of ['/dist/remoteEntry.js', '/ssr/remoteEntry.js']) {
-    const response = await page.request.get(`${REMOTE_ORIGIN}${remoteEntryPath}`)
+  for (const remoteEntryPath of [
+    '/dist/remoteEntry.js',
+    '/ssr/remoteEntry.js',
+  ]) {
+    const response = await page.request.get(
+      `${REMOTE_ORIGIN}${remoteEntryPath}`,
+    )
     expect(response.ok()).toBeTruthy()
 
     const contentType = (response.headers()['content-type'] ?? '').toLowerCase()
@@ -287,7 +305,9 @@ test('serves remote entries as javascript over HTTP', async ({ page }) => {
   }
 })
 
-test('serves federation manifest and stats endpoints as JSON', async ({ page }) => {
+test('serves federation manifest and stats endpoints as JSON', async ({
+  page,
+}) => {
   const expectedExposePaths = {
     message: './message',
     routes: './routes',
@@ -313,10 +333,46 @@ test('serves federation manifest and stats endpoints as JSON', async ({ page }) 
     expectedPublicPath,
     expectedSharedRequiredVersion,
   ] of [
-    ['/dist/mf-manifest.json', 'global', '@mf-types.zip', '@mf-types.d.ts', '', '', `${REMOTE_ORIGIN}/`, '^19.2.3'],
-    ['/dist/mf-stats.json', 'global', '@mf-types.zip', '@mf-types.d.ts', '', '', `${REMOTE_ORIGIN}/`, '^19.2.3'],
-    ['/ssr/mf-manifest.json', 'commonjs-module', '', '', '', '', `${REMOTE_ORIGIN}/ssr/`, '^*'],
-    ['/ssr/mf-stats.json', 'commonjs-module', '', '', '', '', `${REMOTE_ORIGIN}/ssr/`, '^*'],
+    [
+      '/dist/mf-manifest.json',
+      'global',
+      '@mf-types.zip',
+      '@mf-types.d.ts',
+      '',
+      '',
+      `${REMOTE_ORIGIN}/`,
+      EXPECTED_CLIENT_SHARED_REQUIRED_VERSION,
+    ],
+    [
+      '/dist/mf-stats.json',
+      'global',
+      '@mf-types.zip',
+      '@mf-types.d.ts',
+      '',
+      '',
+      `${REMOTE_ORIGIN}/`,
+      EXPECTED_CLIENT_SHARED_REQUIRED_VERSION,
+    ],
+    [
+      '/ssr/mf-manifest.json',
+      'commonjs-module',
+      '',
+      '',
+      '',
+      '',
+      `${REMOTE_ORIGIN}/ssr/`,
+      '^*',
+    ],
+    [
+      '/ssr/mf-stats.json',
+      'commonjs-module',
+      '',
+      '',
+      '',
+      '',
+      `${REMOTE_ORIGIN}/ssr/`,
+      '^*',
+    ],
   ] as const) {
     const response = await page.request.get(`${REMOTE_ORIGIN}${path}`)
     expect(response.ok()).toBeTruthy()
@@ -347,7 +403,8 @@ test('serves federation manifest and stats endpoints as JSON', async ({ page }) 
     expect(isVersionLike(parsed.metaData?.pluginVersion)).toBeTruthy()
     expect(parsed.metaData?.buildInfo?.buildVersion).toBe('local')
     expect(
-      parsed.metaData?.buildInfo?.buildName?.includes(REMOTE_PACKAGE_NAME) ?? false,
+      parsed.metaData?.buildInfo?.buildName?.includes(REMOTE_PACKAGE_NAME) ??
+        false,
     ).toBeTruthy()
     expect(Array.isArray(parsed.shared)).toBeTruthy()
     expect(Array.isArray(parsed.exposes)).toBeTruthy()
@@ -419,7 +476,9 @@ test('serves federation manifest and stats endpoints as JSON', async ({ page }) 
 
     const exposesByName = getExposesByName(parsed)
     expect(exposesByName.size).toBe(3)
-    for (const [exposeName, exposePath] of Object.entries(expectedExposePaths)) {
+    for (const [exposeName, exposePath] of Object.entries(
+      expectedExposePaths,
+    )) {
       const expose = exposesByName.get(exposeName)
       expect(expose).toBeDefined()
       expect(expose?.id).toBe(`mf_remote:${exposeName}`)
@@ -441,7 +500,9 @@ test('serves federation manifest and stats endpoints as JSON', async ({ page }) 
   }
 })
 
-test('keeps node shared ownership contract in federation stats', async ({ page }) => {
+test('keeps node shared ownership contract in federation stats', async ({
+  page,
+}) => {
   const ssrStats = await fetchManifest(page, ['/ssr/mf-stats.json'])
   const browserStats = await fetchManifest(page, ['/dist/mf-stats.json'])
 
@@ -489,14 +550,20 @@ test('keeps node shared ownership contract in federation stats', async ({ page }
   }
 })
 
-test('keeps federation manifest and stats metadata aligned', async ({ page }) => {
+test('keeps federation manifest and stats metadata aligned', async ({
+  page,
+}) => {
   const browserManifest = await fetchManifest(page, ['/dist/mf-manifest.json'])
   const browserStats = await fetchManifest(page, ['/dist/mf-stats.json'])
   const ssrManifest = await fetchManifest(page, ['/ssr/mf-manifest.json'])
   const ssrStats = await fetchManifest(page, ['/ssr/mf-stats.json'])
 
-  expect(browserManifest.metaData?.pluginVersion).toBe(ssrManifest.metaData?.pluginVersion)
-  expect(browserStats.metaData?.pluginVersion).toBe(ssrStats.metaData?.pluginVersion)
+  expect(browserManifest.metaData?.pluginVersion).toBe(
+    ssrManifest.metaData?.pluginVersion,
+  )
+  expect(browserStats.metaData?.pluginVersion).toBe(
+    ssrStats.metaData?.pluginVersion,
+  )
 
   for (const [manifest, stats] of [
     [browserManifest, browserStats],
@@ -506,9 +573,15 @@ test('keeps federation manifest and stats metadata aligned', async ({ page }) =>
     expect(stats.name).toBe(manifest.name)
     expect(stats.metaData?.name).toBe(manifest.metaData?.name)
     expect(stats.metaData?.type).toBe(manifest.metaData?.type)
-    expect(stats.metaData?.remoteEntry?.name).toBe(manifest.metaData?.remoteEntry?.name)
-    expect(stats.metaData?.remoteEntry?.path).toBe(manifest.metaData?.remoteEntry?.path)
-    expect(stats.metaData?.remoteEntry?.type).toBe(manifest.metaData?.remoteEntry?.type)
+    expect(stats.metaData?.remoteEntry?.name).toBe(
+      manifest.metaData?.remoteEntry?.name,
+    )
+    expect(stats.metaData?.remoteEntry?.path).toBe(
+      manifest.metaData?.remoteEntry?.path,
+    )
+    expect(stats.metaData?.remoteEntry?.type).toBe(
+      manifest.metaData?.remoteEntry?.type,
+    )
     expect(stats.metaData?.publicPath).toBe(manifest.metaData?.publicPath)
     expect(stats.metaData?.types?.zip).toBe(manifest.metaData?.types?.zip)
     expect(stats.metaData?.types?.api).toBe(manifest.metaData?.types?.api)
@@ -521,7 +594,9 @@ test('keeps federation manifest and stats metadata aligned', async ({ page }) =>
       manifest.metaData?.buildInfo?.buildName,
     )
     expect(stats.metaData?.globalName).toBe(manifest.metaData?.globalName)
-    expect(stats.metaData?.prefetchInterface).toBe(manifest.metaData?.prefetchInterface)
+    expect(stats.metaData?.prefetchInterface).toBe(
+      manifest.metaData?.prefetchInterface,
+    )
     expect(stats.metaData?.pluginVersion).toBe(manifest.metaData?.pluginVersion)
 
     expect(getSortedEntryNames(stats.shared ?? [])).toEqual(
@@ -553,18 +628,18 @@ test('keeps federation manifest and stats metadata aligned', async ({ page }) =>
       expect(normalizeEager(statsShared?.eager)).toBe(
         normalizeEager(manifestShared?.eager),
       )
-      expect(
-        sortAssetPaths(statsShared?.assets?.js?.sync ?? []),
-      ).toEqual(sortAssetPaths(manifestShared?.assets?.js?.sync ?? []))
-      expect(
-        sortAssetPaths(statsShared?.assets?.js?.async ?? []),
-      ).toEqual(sortAssetPaths(manifestShared?.assets?.js?.async ?? []))
-      expect(
-        sortAssetPaths(statsShared?.assets?.css?.sync ?? []),
-      ).toEqual(sortAssetPaths(manifestShared?.assets?.css?.sync ?? []))
-      expect(
-        sortAssetPaths(statsShared?.assets?.css?.async ?? []),
-      ).toEqual(sortAssetPaths(manifestShared?.assets?.css?.async ?? []))
+      expect(sortAssetPaths(statsShared?.assets?.js?.sync ?? [])).toEqual(
+        sortAssetPaths(manifestShared?.assets?.js?.sync ?? []),
+      )
+      expect(sortAssetPaths(statsShared?.assets?.js?.async ?? [])).toEqual(
+        sortAssetPaths(manifestShared?.assets?.js?.async ?? []),
+      )
+      expect(sortAssetPaths(statsShared?.assets?.css?.sync ?? [])).toEqual(
+        sortAssetPaths(manifestShared?.assets?.css?.sync ?? []),
+      )
+      expect(sortAssetPaths(statsShared?.assets?.css?.async ?? [])).toEqual(
+        sortAssetPaths(manifestShared?.assets?.css?.async ?? []),
+      )
     }
 
     const manifestExposesByName = getExposesByName(manifest)
@@ -576,19 +651,21 @@ test('keeps federation manifest and stats metadata aligned', async ({ page }) =>
       expect(statsExpose?.id).toBe(manifestExpose?.id)
       expect(statsExpose?.path).toBe(manifestExpose?.path)
       expect(statsExpose?.file).toBeDefined()
-      expect(statsExpose?.requires ?? []).toEqual(manifestExpose?.requires ?? [])
-      expect(
-        sortAssetPaths(statsExpose?.assets?.js?.sync ?? []),
-      ).toEqual(sortAssetPaths(manifestExpose?.assets?.js?.sync ?? []))
-      expect(
-        sortAssetPaths(statsExpose?.assets?.js?.async ?? []),
-      ).toEqual(sortAssetPaths(manifestExpose?.assets?.js?.async ?? []))
-      expect(
-        sortAssetPaths(statsExpose?.assets?.css?.sync ?? []),
-      ).toEqual(sortAssetPaths(manifestExpose?.assets?.css?.sync ?? []))
-      expect(
-        sortAssetPaths(statsExpose?.assets?.css?.async ?? []),
-      ).toEqual(sortAssetPaths(manifestExpose?.assets?.css?.async ?? []))
+      expect(statsExpose?.requires ?? []).toEqual(
+        manifestExpose?.requires ?? [],
+      )
+      expect(sortAssetPaths(statsExpose?.assets?.js?.sync ?? [])).toEqual(
+        sortAssetPaths(manifestExpose?.assets?.js?.sync ?? []),
+      )
+      expect(sortAssetPaths(statsExpose?.assets?.js?.async ?? [])).toEqual(
+        sortAssetPaths(manifestExpose?.assets?.js?.async ?? []),
+      )
+      expect(sortAssetPaths(statsExpose?.assets?.css?.sync ?? [])).toEqual(
+        sortAssetPaths(manifestExpose?.assets?.css?.sync ?? []),
+      )
+      expect(sortAssetPaths(statsExpose?.assets?.css?.async ?? [])).toEqual(
+        sortAssetPaths(manifestExpose?.assets?.css?.async ?? []),
+      )
     }
   }
 
@@ -612,20 +689,28 @@ test('keeps plugin and build metadata consistent across json endpoints', async (
   const ssrManifest = await fetchManifest(page, ['/ssr/mf-manifest.json'])
   const ssrStats = await fetchManifest(page, ['/ssr/mf-stats.json'])
 
-  const endpointPayloads = [browserManifest, browserStats, ssrManifest, ssrStats]
+  const endpointPayloads = [
+    browserManifest,
+    browserStats,
+    ssrManifest,
+    ssrStats,
+  ]
   for (const payload of endpointPayloads) {
     expect(payload.metaData?.pluginVersion).toBeDefined()
     expect((payload.metaData?.pluginVersion?.length ?? 0) > 0).toBeTruthy()
     expect(isVersionLike(payload.metaData?.pluginVersion)).toBeTruthy()
     expect(payload.metaData?.buildInfo?.buildVersion).toBe('local')
     expect(
-      payload.metaData?.buildInfo?.buildName?.includes(REMOTE_PACKAGE_NAME) ?? false,
+      payload.metaData?.buildInfo?.buildName?.includes(REMOTE_PACKAGE_NAME) ??
+        false,
     ).toBeTruthy()
   }
 
   const [firstPayload] = endpointPayloads
   for (const payload of endpointPayloads) {
-    expect(payload.metaData?.pluginVersion).toBe(firstPayload.metaData?.pluginVersion)
+    expect(payload.metaData?.pluginVersion).toBe(
+      firstPayload.metaData?.pluginVersion,
+    )
     expect(payload.metaData?.buildInfo?.buildVersion).toBe(
       firstPayload.metaData?.buildInfo?.buildVersion,
     )
@@ -655,7 +740,9 @@ test('serves browser federated types zip over HTTP', async ({ page }) => {
   expect(body.length).toBeGreaterThan(0)
 })
 
-test('serves node-compatible remote SSR manifest metadata', async ({ page }) => {
+test('serves node-compatible remote SSR manifest metadata', async ({
+  page,
+}) => {
   const manifest = await fetchManifest(page, ['/ssr/mf-manifest.json'])
   assertManifestIdentity(manifest)
   assertRemoteEntryMeta(manifest, 'commonjs-module', `${REMOTE_ORIGIN}/ssr/`)
@@ -682,7 +769,9 @@ test('serves node-compatible remote SSR manifest metadata', async ({ page }) => 
   await assertExposeContracts(page, manifest, '/ssr')
 })
 
-test('serves browser manifest with shared fallback assets', async ({ page }) => {
+test('serves browser manifest with shared fallback assets', async ({
+  page,
+}) => {
   const manifest = await fetchManifest(page, [
     '/mf-manifest.json',
     '/dist/mf-manifest.json',
@@ -776,5 +865,44 @@ test('loads federated server function data', async ({ page }) => {
   )
   await expect(page.getByTestId('server-fn-result')).toContainText(
     '"message":"Federated server data from remote"',
+  )
+})
+
+test('serializes response-like redirects from federated server functions', async ({
+  page,
+}) => {
+  test.skip(
+    HOST_MODE !== 'ssr',
+    'Server federation runtime is only enabled for SSR mode.',
+  )
+
+  await page.goto('/server-fn-mf')
+  await expect(page.getByTestId('server-fn-heading')).toBeVisible()
+
+  await page.getByTestId('server-fn-redirect-btn').click()
+
+  await expect(page.getByTestId('host-heading')).toContainText(
+    'Host application',
+  )
+})
+
+test('returns raw Response values from federated server functions', async ({
+  page,
+}) => {
+  test.skip(
+    HOST_MODE !== 'ssr',
+    'Server federation runtime is only enabled for SSR mode.',
+  )
+
+  await page.goto('/server-fn-mf')
+  await expect(page.getByTestId('server-fn-heading')).toBeVisible()
+
+  await page.getByTestId('server-fn-raw-btn').click()
+
+  await expect(page.getByTestId('server-fn-raw-result')).toContainText(
+    'Federated raw response from remote (server-function)',
+  )
+  await expect(page.getByTestId('server-fn-raw-result')).toContainText(
+    '"status":202',
   )
 })

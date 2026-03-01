@@ -59,6 +59,12 @@
         "default": "./dist/esm/createSsrRpc.js"
       }
     },
+    "./server-fn-ssr-caller": {
+      "import": {
+        "types": "./dist/esm/server-fn-ssr-caller.d.ts",
+        "default": "./dist/esm/server-fn-ssr-caller.js"
+      }
+    },
     "./package.json": "./package.json"
   },
   "imports": {
@@ -80,7 +86,7 @@
     "@tanstack/start-client-core": "workspace:*",
     "@tanstack/start-storage-context": "workspace:*",
     "h3-v2": "npm:h3@2.0.1-rc.14",
-    "seroval": "^1.4.2",
+    "seroval": "1.4.2",
     "tiny-invariant": "^1.3.3"
   },
   "devDependencies": {

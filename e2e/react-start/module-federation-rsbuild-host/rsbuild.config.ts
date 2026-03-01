@@ -34,10 +34,7 @@ const startConfig = isSpaMode
           crawlLinks: false,
           autoStaticPathsDiscovery: false,
         },
-        pages: [
-          { path: '/' },
-          { path: '/selective-client-only' },
-        ],
+        pages: [{ path: '/' }, { path: '/selective-client-only' }],
       }
     : undefined
 
@@ -48,13 +45,12 @@ export default defineConfig({
       {
         name: 'mf_host',
         remotes: {
-          mf_remote: `mf_remote@${remoteOrigin}/remoteEntry.js`,
+          mf_remote: `mf_remote@${remoteOrigin}/dist/remoteEntry.js`,
         },
         dts: false,
         experiments: {
           asyncStartup: true,
         },
-        runtimePlugins: [require.resolve('@module-federation/node/runtimePlugin')],
         shared,
       },
       {
@@ -84,7 +80,10 @@ export default defineConfig({
         environment: 'ssr',
       },
     ),
-    ...tanstackStart(startConfig),
+    ...tanstackStart({
+      ...startConfig,
+      federation: hostMode === 'ssr',
+    }),
   ],
   environments: {
     ssr: {},
