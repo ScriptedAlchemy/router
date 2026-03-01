@@ -57,6 +57,33 @@ describe('serverFnFetcher redirect parsing', () => {
     }
   })
 
+  it('falls back to top-level statusCode/options redirect payloads', async () => {
+    try {
+      await serverFnFetcher('/_serverFn/test', getFetchArgs(), () => {
+        return Promise.resolve(
+          Response.json({
+            statusCode: 307,
+            options: {
+              to: '/status-code-target',
+            },
+          }),
+        )
+      })
+
+      throw new Error('Expected serverFnFetcher to throw a redirect')
+    } catch (error) {
+      expect(isRedirect(error)).toBe(true)
+      expect(
+        (error as { options: { to?: string; statusCode?: number } }).options,
+      ).toEqual(
+        expect.objectContaining({
+          to: '/status-code-target',
+          statusCode: 307,
+        }),
+      )
+    }
+  })
+
   it('preserves explicit options.statusCode over fallback status', async () => {
     try {
       await serverFnFetcher('/_serverFn/test', getFetchArgs(), () => {

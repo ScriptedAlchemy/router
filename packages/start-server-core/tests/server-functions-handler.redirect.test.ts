@@ -63,6 +63,25 @@ describe('server-functions-handler redirect fallback parsing', () => {
     )
   })
 
+  it('falls back to top-level statusCode when status is missing', async () => {
+    const response = await runServerFnWithResult({
+      statusCode: 302,
+      options: {
+        href: '/status-code-target',
+      },
+    })
+
+    expect(response.status).toBe(200)
+    const payload = await response.json()
+    expect(payload).toEqual(
+      expect.objectContaining({
+        isSerializedRedirect: true,
+        href: '/status-code-target',
+        statusCode: 302,
+      }),
+    )
+  })
+
   it('does not fallback-parse payloads with non-legacy keys', async () => {
     const response = await runServerFnWithResult({
       status: 302,

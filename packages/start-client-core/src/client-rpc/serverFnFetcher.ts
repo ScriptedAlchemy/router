@@ -87,12 +87,16 @@ function getRedirectOptionsFromPayload(
 
   const candidate = payload as {
     status?: unknown
+    statusCode?: unknown
     headers?: Headers
     options?: unknown
   }
 
-  const statusCode =
+  const statusCodeFromStatus =
     typeof candidate.status === 'number' ? candidate.status : undefined
+  const statusCodeFromPayload =
+    typeof candidate.statusCode === 'number' ? candidate.statusCode : undefined
+  const statusCode = statusCodeFromStatus ?? statusCodeFromPayload
   const isRedirectStatusCode =
     statusCode !== undefined && statusCode >= 300 && statusCode < 400
   const responseLike = isResponseLike(payload)
@@ -108,7 +112,7 @@ function getRedirectOptionsFromPayload(
         ...options,
         ...(typeof options.statusCode === 'number'
           ? {}
-          : statusCode
+          : statusCode !== undefined
             ? { statusCode }
             : {}),
       }

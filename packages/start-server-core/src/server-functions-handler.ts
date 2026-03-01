@@ -430,10 +430,14 @@ function getRedirectOptions(
     const candidate = value as {
       options?: unknown
       status?: unknown
+      statusCode?: unknown
       headers?: { get?: unknown }
     }
-    const statusCode =
+    const statusCodeFromStatus =
       typeof candidate.status === 'number' ? candidate.status : undefined
+    const statusCodeFromPayload =
+      typeof candidate.statusCode === 'number' ? candidate.statusCode : undefined
+    const statusCode = statusCodeFromStatus ?? statusCodeFromPayload
     const isRedirectStatusCode =
       statusCode !== undefined && statusCode >= 300 && statusCode < 400
 
