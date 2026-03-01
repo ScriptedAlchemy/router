@@ -112,9 +112,7 @@ function getRedirectOptionsFromPayload(
         ...options,
         ...(typeof options.statusCode === 'number'
           ? {}
-          : statusCode !== undefined
-            ? { statusCode }
-            : {}),
+          : { statusCode }),
       }
     }
   }
