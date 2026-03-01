@@ -48,13 +48,12 @@ export default defineConfig({
       {
         name: 'mf_host',
         remotes: {
-          mf_remote: `mf_remote@${remoteOrigin}/remoteEntry.js`,
+          mf_remote: `mf_remote@${remoteOrigin}/dist/remoteEntry.js`,
         },
         dts: false,
         experiments: {
           asyncStartup: true,
         },
-        runtimePlugins: [require.resolve('@module-federation/node/runtimePlugin')],
         shared,
       },
       {
