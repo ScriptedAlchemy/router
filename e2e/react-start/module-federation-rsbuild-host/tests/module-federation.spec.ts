@@ -2,12 +2,18 @@ import { expect } from '@playwright/test'
 import type { Page } from '@playwright/test'
 import { getTestServerPort, test } from '@tanstack/router-e2e-utils'
 import packageJson from '../package.json' with { type: 'json' }
+import reactPackageJson from 'react/package.json' with { type: 'json' }
 
 const REMOTE_PORT = await getTestServerPort(`${packageJson.name}-remote`)
 const REMOTE_ORIGIN = `http://localhost:${REMOTE_PORT}`
 const HOST_MODE = process.env.HOST_MODE || 'ssr'
 const REMOTE_PACKAGE_NAME = packageJson.name.replace(/-host$/, '-remote')
+const EXPECTED_INSTALLED_REACT_REQUIRED_VERSION =
+  typeof reactPackageJson.version === 'string'
+    ? `^${reactPackageJson.version}`
+    : undefined
 const EXPECTED_CLIENT_SHARED_REQUIRED_VERSION =
+  EXPECTED_INSTALLED_REACT_REQUIRED_VERSION ??
   (packageJson.dependencies?.react as string | undefined) ??
   (packageJson.devDependencies?.react as string | undefined) ??
   '^*'
