@@ -97,4 +97,3 @@ The browser types artifact is also validated at:
 - `/dist/@mf-types.zip`
 
 and must be retrievable over HTTP as a non-HTML payload.
-

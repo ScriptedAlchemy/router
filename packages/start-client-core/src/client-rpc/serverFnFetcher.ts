@@ -74,7 +74,8 @@ function getRedirectOptionsFromPayload(
 
   if (
     'isSerializedRedirect' in payload &&
-    (payload as { isSerializedRedirect?: boolean }).isSerializedRedirect === true
+    (payload as { isSerializedRedirect?: boolean }).isSerializedRedirect ===
+      true
   ) {
     return payload as unknown as Record<string, unknown>
   }

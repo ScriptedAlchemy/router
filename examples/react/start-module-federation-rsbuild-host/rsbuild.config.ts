@@ -34,10 +34,7 @@ const startConfig = isSpaMode
           crawlLinks: false,
           autoStaticPathsDiscovery: false,
         },
-        pages: [
-          { path: '/' },
-          { path: '/selective-client-only' },
-        ],
+        pages: [{ path: '/' }, { path: '/selective-client-only' }],
       }
     : undefined
 
@@ -54,7 +51,9 @@ export default defineConfig({
         experiments: {
           asyncStartup: true,
         },
-        runtimePlugins: [require.resolve('@module-federation/node/runtimePlugin')],
+        runtimePlugins: [
+          require.resolve('@module-federation/node/runtimePlugin'),
+        ],
         shared,
       },
       {

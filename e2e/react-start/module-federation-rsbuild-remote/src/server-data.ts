@@ -28,7 +28,8 @@ export function getFederatedResponseLikeRedirect(
     headers: new Headers({ Location: href }),
     ok: false,
     body: null,
-    json: () => Promise.reject(new Error('No JSON body for redirect-like response')),
+    json: () =>
+      Promise.reject(new Error('No JSON body for redirect-like response')),
     text: () => Promise.resolve(''),
     options: {
       href,

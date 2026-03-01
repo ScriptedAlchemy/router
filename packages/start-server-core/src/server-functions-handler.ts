@@ -438,7 +438,10 @@ function getRedirectOptions(
         (typeof options.href === 'string' || typeof options.to === 'string') &&
         isRedirectStatusCode
       ) {
-        return options
+        return {
+          ...options,
+          ...(typeof options.statusCode === 'number' ? {} : { statusCode }),
+        }
       }
     }
 

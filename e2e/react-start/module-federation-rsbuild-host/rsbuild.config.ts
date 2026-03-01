@@ -34,10 +34,7 @@ const startConfig = isSpaMode
           crawlLinks: false,
           autoStaticPathsDiscovery: false,
         },
-        pages: [
-          { path: '/' },
-          { path: '/selective-client-only' },
-        ],
+        pages: [{ path: '/' }, { path: '/selective-client-only' }],
       }
     : undefined
 

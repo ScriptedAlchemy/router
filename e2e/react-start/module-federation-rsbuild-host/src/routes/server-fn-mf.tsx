@@ -11,9 +11,8 @@ const getRemoteServerData = createServerFn({ method: 'GET' }).handler(
 
 const redirectFromResponseLike = createServerFn({ method: 'GET' }).handler(
   async () => {
-    const { getFederatedResponseLikeRedirect } = await import(
-      'mf_remote/server-data'
-    )
+    const { getFederatedResponseLikeRedirect } =
+      await import('mf_remote/server-data')
     const redirectPayload = getFederatedResponseLikeRedirect('/')
     const redirectOptions = getRedirectOptions(redirectPayload)
 
@@ -41,12 +40,15 @@ const getRemoteRawResponse = createServerFn({ method: 'GET' }).handler(
       return normalized
     }
 
-    return new Response(`Federated raw response from remote (server-function)`, {
-      status: 202,
-      headers: {
-        'content-type': 'text/plain; charset=utf-8',
+    return new Response(
+      `Federated raw response from remote (server-function)`,
+      {
+        status: 202,
+        headers: {
+          'content-type': 'text/plain; charset=utf-8',
+        },
       },
-    })
+    )
   },
 )
 
@@ -191,7 +193,10 @@ async function normalizeRawResponse(value: unknown): Promise<Response | null> {
     headers?: unknown
   }
 
-  if (typeof candidate.status !== 'number' || typeof candidate.text !== 'function') {
+  if (
+    typeof candidate.status !== 'number' ||
+    typeof candidate.text !== 'function'
+  ) {
     return null
   }
 
@@ -212,6 +217,7 @@ async function normalizeRawResponse(value: unknown): Promise<Response | null> {
 }
 
 type ServerFnMfSearch = {
+  redirect?: '1'
   raw?: '1'
 }
 
@@ -225,24 +231,36 @@ type ServerFnMfLoaderData = {
 
 export const Route = createFileRoute('/server-fn-mf')({
   validateSearch: (search: Record<string, unknown>): ServerFnMfSearch => {
+    const redirectValue = search.redirect
+    const redirectValues = Array.isArray(redirectValue)
+      ? redirectValue
+      : [redirectValue]
+    const shouldTriggerRedirect = redirectValues.some(
+      (value) =>
+        value === '1' || value === 1 || value === true || value === 'true',
+    )
+
     const rawValue = search.raw
     const rawValues = Array.isArray(rawValue) ? rawValue : [rawValue]
     const shouldReadRawResponse = rawValues.some(
       (value) =>
-        value === '1' ||
-        value === 1 ||
-        value === true ||
-        value === 'true',
+        value === '1' || value === 1 || value === true || value === 'true',
     )
 
     return {
+      redirect: shouldTriggerRedirect ? '1' : undefined,
       raw: shouldReadRawResponse ? '1' : undefined,
     }
   },
   loaderDeps: ({ search }) => ({
+    redirect: Boolean(search.redirect),
     raw: Boolean(search.raw),
   }),
   loader: async ({ deps }): Promise<ServerFnMfLoaderData> => {
+    if (deps.redirect) {
+      await redirectFromResponseLike()
+    }
+
     const response = await getRemoteServerData()
     if (!deps.raw) {
       return {
@@ -251,8 +269,7 @@ export const Route = createFileRoute('/server-fn-mf')({
       }
     }
 
-    const { getFederatedRawResponse } = await import('mf_remote/server-data')
-    const rawPayload = getFederatedRawResponse('server-function')
+    const rawPayload = await getRemoteRawResponse()
     const rawResponse =
       (await normalizeRawResponse(rawPayload)) || createFallbackRawResponse()
 
@@ -279,21 +296,13 @@ function ServerFunctionFederationRoute() {
     <main style={{ fontFamily: 'sans-serif', padding: '1rem' }}>
       <h2 data-testid="server-fn-heading">Server function federation route</h2>
       <pre data-testid="server-fn-result">{JSON.stringify(response)}</pre>
-      <a
-        data-testid="server-fn-redirect-btn"
-        href="/"
-      >
+      <a data-testid="server-fn-redirect-btn" href="/server-fn-mf?redirect=1">
         Trigger response-like redirect
       </a>
-      <a
-        data-testid="server-fn-raw-btn"
-        href="/server-fn-mf?raw=1"
-      >
+      <a data-testid="server-fn-raw-btn" href="/server-fn-mf?raw=1">
         Read federated raw response
       </a>
-      <pre data-testid="server-fn-raw-result">
-        {JSON.stringify(rawResult)}
-      </pre>
+      <pre data-testid="server-fn-raw-result">{JSON.stringify(rawResult)}</pre>
     </main>
   )
 }

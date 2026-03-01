@@ -19,4 +19,3 @@ describe('server-fn-ssr-caller export', () => {
     )
   })
 })
-
