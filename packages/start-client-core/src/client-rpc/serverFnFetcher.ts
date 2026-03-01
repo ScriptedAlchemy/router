@@ -65,6 +65,11 @@ function isResponseLike(value: unknown): value is Response {
   )
 }
 
+function isLegacyFallbackRedirectPayload(candidate: Record<string, unknown>) {
+  const allowedKeys = new Set(['status', 'statusCode', 'options', 'headers'])
+  return Object.keys(candidate).every((key) => allowedKeys.has(key))
+}
+
 function getRedirectOptionsFromPayload(
   payload: unknown,
 ): Record<string, unknown> | undefined {
@@ -95,12 +100,17 @@ function getRedirectOptionsFromPayload(
   if (candidate.options && typeof candidate.options === 'object') {
     const options = candidate.options as Record<string, unknown>
     if (
+      isLegacyFallbackRedirectPayload(candidate as Record<string, unknown>) &&
       (typeof options.href === 'string' || typeof options.to === 'string') &&
       isRedirectStatusCode
     ) {
       return {
         ...options,
-        ...(statusCode ? { statusCode } : {}),
+        ...(typeof options.statusCode === 'number'
+          ? {}
+          : statusCode
+            ? { statusCode }
+            : {}),
       }
     }
   }

@@ -144,35 +144,6 @@ function createFallbackRawResponse() {
   })
 }
 
-function getRedirectHref(value: unknown): string | undefined {
-  if (!value || typeof value !== 'object') {
-    return undefined
-  }
-
-  const candidate = value as {
-    href?: unknown
-    to?: unknown
-    options?: {
-      href?: unknown
-      to?: unknown
-    }
-  }
-
-  if (typeof candidate.href === 'string') {
-    return candidate.href
-  }
-  if (typeof candidate.to === 'string') {
-    return candidate.to
-  }
-  if (typeof candidate.options?.href === 'string') {
-    return candidate.options.href
-  }
-  if (typeof candidate.options?.to === 'string') {
-    return candidate.options.to
-  }
-  return undefined
-}
-
 async function normalizeRawResponse(value: unknown): Promise<Response | null> {
   if (value instanceof Response) {
     return value
